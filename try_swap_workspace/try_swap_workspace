@@ -37,7 +37,9 @@ checkUtils() {
 	# shellcheck disable=SC2015
 	check grep && ok "grep" || err "grep"
 	# shellcheck disable=SC2015
-	check grep && ok "cut" || err "cut"
+	check jq && ok "jq" || err "jq"
+	# shellcheck disable=SC2015
+	check cut && ok "cut" || err "cut"
 	# shellcheck disable=SC2015
 	check notify-send && ok "notify-send (Optional)" || optional "notify-send (Optional)"
 	exit
@@ -101,7 +103,7 @@ getArgs() {
 mon_wrkspcs=()
 
 get_active_mon() {
-  echo $(($(hyprctl monitors | grep 'focused' | grep -n 'yes' | cut -c1)-1))
+  echo $(($(hyprctl monitors -j | jq '.[] | select(.focused == true) | .id')))
 }
 
 get_workspaces_array() {
